@@ -30,6 +30,10 @@ jobs:
           sudo find dump/ -type f -exec chmod 644 {} \;
           sudo find dump/ -type d -exec chmod 755 {} \;
 
+      - name: Remove invalid symlinks
+        run: |
+          find dump/ -xtype l -delete
+
       - name: Upload dumps repository as artifact
         uses: actions/upload-artifact@v4
         with:
