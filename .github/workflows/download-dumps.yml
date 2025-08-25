@@ -22,18 +22,24 @@ jobs:
     runs-on: azu
 
     steps:
+      - name: Chown user
+        run: |
+          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
+          
+      - uses: actions/checkout@v4
+      
       - name: Clone dumps repository
         run: |
-          git clone --depth 1 --single-branch --branch pa1qxxx-user-15-AP3A.240905.015.A2-S931BXXU1AYB4-release-keys https://dumps.tadiphone.dev/dumps/samsung/pa1q.git dump
-          sudo chown -R runner:docker dump/
-          sudo chmod -R u+rwX,go+rX dump/
+          git clone --depth 1 --branch pa1qxxx-user-15-AP3A.240905.015.A2-S931BXXU1AYB4-release-keys https://dumps.tadiphone.dev/dumps/samsung/pa1q.git dump
+          sudo find dump/ -type l -delete
+          sudo find dump/ -type d \( -name ".git" -o -name ".github" \) -exec rm -rf {} +
+          sudo chown -R  $USER:$USER dump/
           sudo find dump/ -type f -exec chmod 644 {} \;
           sudo find dump/ -type d -exec chmod 755 {} \;
-
-      - name: Remove invalid symlinks
-        run: |
-          find dump/ -xtype l -delete
-
+          cd dump
+          pwd
+          cd ..
+          
       - name: Upload dumps repository as artifact
         uses: actions/upload-artifact@v4
         with:
