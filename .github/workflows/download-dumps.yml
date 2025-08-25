@@ -5,6 +5,18 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  actions: write
+  checks: write
+  deployments: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
 jobs:
   download-dumps:
     runs-on: azu
@@ -14,7 +26,9 @@ jobs:
         run: |
           git clone --depth 1 --single-branch --branch pa1qxxx-user-15-AP3A.240905.015.A2-S931BXXU1AYB4-release-keys https://dumps.tadiphone.dev/dumps/samsung/pa1q.git dump
           sudo chown -R runner:docker dump/
-          sudo chmod -R 755 dump/
+          sudo chmod -R u+rwX,go+rX dump/
+          sudo find dump/ -type f -exec chmod 644 {} \;
+          sudo find dump/ -type d -exec chmod 755 {} \;
 
       - name: Upload dumps repository as artifact
         uses: actions/upload-artifact@v4
@@ -22,3 +36,7 @@ jobs:
           name: dumps-repository
           path: dump/
           retention-days: 30
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: true
