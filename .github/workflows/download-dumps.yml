@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Clone dumps repository
         run: |
-          git clone --depth 1 --branch pa1qxxx-user-15-AP3A.240905.015.A2-S931BXXU1AYB4-release-keys https://dumps.tadiphone.dev/dumps/samsung/pa1q.git dump
+          git clone --depth 1 --single-branch --branch pa1qxxx-user-15-AP3A.240905.015.A2-S931BXXU1AYB4-release-keys https://dumps.tadiphone.dev/dumps/samsung/pa1q.git dump
           sudo chown -R runner:docker dump/
           sudo chmod -R 755 dump/
 
