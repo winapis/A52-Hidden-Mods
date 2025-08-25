@@ -1,0 +1,23 @@
+---
+name: Download Dumps Repository
+
+'on':
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  download-dumps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone dumps repository
+        run: |
+          git clone https://dumps.tadiphone.dev/dumps/samsung/pa1q.git dump
+
+      - name: Upload dumps repository as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dumps-repository
+          path: dump/
+          retention-days: 30

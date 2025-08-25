@@ -1,47 +1,37 @@
 # Workflow Configuration
 
-This repository includes a GitHub Actions workflow that automatically syncs the repository content to `https://dumps.tadiphone.dev/dumps/samsung/pa1q.git`.
+This repository includes a GitHub Actions workflow that downloads the dumps repository from `https://dumps.tadiphone.dev/dumps/samsung/pa1q.git` and makes it available as a downloadable artifact.
 
 ## Setup Instructions
 
-### Required Secrets
+### No Configuration Required
 
-To configure the workflow, you need to add the following secrets to your GitHub repository:
-
-1. Go to your repository on GitHub
-2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret** and add:
-
-#### Required Secrets:
-- `DUMPS_USERNAME`: Username for authentication with dumps.tadiphone.dev
-- `DUMPS_PASSWORD`: Password or personal access token for authentication
-
-#### Optional Secrets:
-- `DUMPS_REPO_URL`: Custom repository URL (defaults to `https://dumps.tadiphone.dev/dumps/samsung/pa1q.git`)
+This workflow works out of the box and doesn't require any secrets or configuration. It simply clones the public dumps repository and uploads it as an artifact.
 
 ### Workflow Triggers
 
 The workflow runs automatically:
-- **On push to main branch**: Syncs changes immediately
+- **On push to main branch**: Downloads the latest dumps repository
 - **Manual trigger**: Can be run manually from the Actions tab
 
 ### What the Workflow Does
 
-1. **Checkout**: Downloads the complete repository history
-2. **Configure Git**: Sets up Git user for the sync operation
-3. **Authentication**: Uses provided credentials to authenticate with the target repository
-4. **Sync**: Pushes all branches and tags to the dumps repository
-5. **Cleanup**: Removes authentication details from Git configuration
+1. **Clone**: Downloads the dumps repository from `https://dumps.tadiphone.dev/dumps/samsung/pa1q.git` into a folder called `dump`
+2. **Upload**: Uploads the entire `dump` folder as a GitHub Actions artifact
+3. **Retention**: Artifacts are kept for 30 days before automatic deletion
 
-### Security Notes
+### Downloading the Artifact
 
-- Credentials are handled securely through GitHub Secrets
-- Authentication details are cleaned up after each run
-- The workflow uses force push to ensure complete synchronization
+After the workflow completes:
+1. Go to the **Actions** tab in your repository
+2. Click on the latest workflow run
+3. Scroll down to the **Artifacts** section
+4. Download the `dumps-repository` artifact (will be a ZIP file)
+5. Extract the ZIP to access the dumps repository content
 
 ### Manual Execution
 
 You can manually trigger the workflow:
 1. Go to the **Actions** tab in your repository
-2. Select **Sync to Dumps Repository**
+2. Select **Download Dumps Repository**
 3. Click **Run workflow**
