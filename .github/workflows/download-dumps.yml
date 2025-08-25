@@ -1,14 +1,13 @@
----
 name: Download Dumps Repository
 
-'on':
+on:
   push:
     branches: [main]
   workflow_dispatch:
 
 jobs:
   download-dumps:
-    runs-on: ubuntu-latest
+    runs-on: azu
 
     steps:
       - name: Clone dumps repository
