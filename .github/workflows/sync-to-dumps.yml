@@ -1,0 +1,51 @@
+---
+name: Sync to Dumps Repository
+
+'on':
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-repository:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for complete sync
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Add remote and push to dumps repository
+        env:
+          DUMPS_REPO_URL: >-
+            ${{ secrets.DUMPS_REPO_URL ||
+            'https://dumps.tadiphone.dev/dumps/samsung/pa1q.git' }}
+          DUMPS_USERNAME: ${{ secrets.DUMPS_USERNAME }}
+          DUMPS_PASSWORD: ${{ secrets.DUMPS_PASSWORD }}
+        run: |
+          # Configure authentication if credentials are provided
+          if [ -n "$DUMPS_USERNAME" ] && [ -n "$DUMPS_PASSWORD" ]; then
+            # Create authenticated URL
+            AUTH_URL=$(echo "$DUMPS_REPO_URL" | \
+              sed "s|https://|https://${DUMPS_USERNAME}:${DUMPS_PASSWORD}@|")
+            git remote add dumps "$AUTH_URL"
+          else
+            # Use URL as-is (for public repos or different auth)
+            git remote add dumps "$DUMPS_REPO_URL"
+          fi
+
+          # Push all branches and tags
+          git push dumps --all --force
+          git push dumps --tags --force
+
+      - name: Cleanup
+        if: always()
+        run: |
+          # Remove the remote to avoid exposing credentials in logs
+          git remote remove dumps || true
